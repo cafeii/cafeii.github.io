@@ -4,19 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>NLP Project 2</title>
+  <title>LLM Blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="这是关于第二次项目实验部分（使用QLoRA对TiniLlaMA进行微调）的实验结果细节进行展示的页面">
-<meta property="og:type" content="website">
-<meta property="og:title" content="NLP Project 2">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="LLM Blogs">
 <meta property="og:url" content="http://cafeii.github.io/index.html">
-<meta property="og:site_name" content="NLP Project 2">
-<meta property="og:description" content="这是关于第二次项目实验部分（使用QLoRA对TiniLlaMA进行微调）的实验结果细节进行展示的页面">
+<meta property="og:site_name" content="LLM Blogs">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="Zhichen Liu">
 <meta name="twitter:card" content="summary">
   
-    <link rel="alternate" href="/atom.xml" title="NLP Project 2" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="LLM Blogs" type="application/atom+xml">
   
   
     <link rel="shortcut icon" href="/favicon.png">
@@ -45,12 +43,8 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">NLP Project 2</a>
+        <a href="/" id="logo">LLM Blogs</a>
       </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Tiny-LlaMA-1.1B &amp; QLoRA Finetune</a>
-        </h2>
       
     </div>
     <div id="header-inner" class="inner">
@@ -93,7 +87,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2023/12/23/proj2/">TinyLlaMA &amp; QLoRA Finetune</a>
+      <a class="p-name article-title" href="/2023/12/23/proj2/">Apply LLMs in Specific Domains</a>
     </h1>
   
 
@@ -116,6 +110,11 @@
 </ol>
 <p>得出这个结论的作者所进行的实验是在7B的LlaMA上进行的，因此当模型大小有变化的时候，rank的使用也应当有相应的变化。</p>
 <p>因此根据这些结论，在对某专业领域的大模型进行LoRA微调时，如果在已经拥有大量高质量数据的时候，最好将LoRA的秩设置的较大（大于32），并将alpha设置为2x rank。如果并不具有大量高质量数据（如本次project中，大约数千条的icliniq数据），则应当将秩设置的较小，并让alpha等于rank。</p>
+<h2 id="details-of-lora-position"><a class="markdownIt-Anchor" href="#details-of-lora-position"></a> Details of LoRA Position</h2>
+<p>最近的对Tiny-LlaMA-1.1B微调的实验中，主要涉及到对于不同位置的LoRA矩阵，以及不同rank的排列组合进行微调。对于不同的rank微调表示的结果基本证明了上段关于rank的结论，而对于位置的排列组合也引出新的结论。</p>
+<p>实验在icliniq数据集上微调，并在MedMCQA上测试。微调数据的格式是问答，测试数据的格式是选择题。</p>
+<p>针对微调结果的分析，发现加在Attention中qkv或者qk上的LoRA能够很好的学习到知识，并且保留模型原有的多选题做题能力。而加载FFN上的LoRA会直接导致模型整体输出风格强制迁移为QA格式，虽然也能引入知识，但是必须要经过few shot激活原有的答题能力，才可以正确做答，因此FFN部分的LoRA更多的关注句法、语法、风格之类信息。将两部分相结合进行LoRA微调，会直接失去做题能力，在few shot之后也能回复，并具有一定知识，相对纯粹的qkv上进行的微调而言会丢失一部分知识，因为这一部分知识被用于微调FFN部分的风格信息。</p>
+<p>因此，如果只是纯粹的引入某些领域上的知识，将LoRA加在qkv上就能取得最好的效果；如果是为了改变模型输出风格和指令跟随格式，需要将LoRA加在ffn上；除非是要同时做到两件事，才将LoRA加在所有参数上，否则这么做会损害最终的模型能力。</p>
 <hr class="footnotes-sep" />
 <section class="footnotes">
 <ol class="footnotes-list">
@@ -127,59 +126,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://cafeii.github.io/2023/12/23/proj2/" data-id="clqhoxrf90001gciqea4rclou" data-title="TinyLlaMA &amp; QLoRA Finetune" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2023/12/23/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2023-12-23T05:14:17.635Z" itemprop="datePublished">2023-12-23</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2023/12/23/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="quick-start"><a class="markdownIt-Anchor" href="#quick-start"></a> Quick Start</h2>
-<h3 id="create-a-new-post"><a class="markdownIt-Anchor" href="#create-a-new-post"></a> Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="run-server"><a class="markdownIt-Anchor" href="#run-server"></a> Run server</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="generate-static-files"><a class="markdownIt-Anchor" href="#generate-static-files"></a> Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="deploy-to-remote-sites"><a class="markdownIt-Anchor" href="#deploy-to-remote-sites"></a> Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://cafeii.github.io/2023/12/23/hello-world/" data-id="clqhoxrf50000gciq5k9fdf7v" data-title="Hello World" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="http://cafeii.github.io/2023/12/23/proj2/" data-id="clqhoxrf90001gciqea4rclou" data-title="Apply LLMs in Specific Domains" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -222,11 +169,7 @@
       <ul>
         
           <li>
-            <a href="/2023/12/23/proj2/">TinyLlaMA &amp; QLoRA Finetune</a>
-          </li>
-        
-          <li>
-            <a href="/2023/12/23/hello-world/">Hello World</a>
+            <a href="/2023/12/23/proj2/">Apply LLMs in Specific Domains</a>
           </li>
         
       </ul>
